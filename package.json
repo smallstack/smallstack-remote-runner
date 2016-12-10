@@ -1,0 +1,19 @@
+{
+  "name": "smallstack-remote-runner",
+  "version": "0.1.0",
+  "description": "Runs any kind of job remotly!",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "watch": "nodemon -e js -x npm run start"
+  },
+  "author": "smallstack.io",
+  "license": "MIT",
+  "dependencies": {
+    "chance": "^1.0.4",
+    "fs-extra": "^1.0.0",
+    "connect": "3.5.0",
+    "dispatch": "1.0.1",
+    "nodemon": "1.11.0"
+  }
+}
