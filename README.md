@@ -16,7 +16,7 @@ Either run it via "npm run start" or deploy it as Docker Image. Be aware that th
 
 ## How-to use?
 ### Start a job
-Do a POST to /job with the following content as json:
+Do a POST to /jobs with the following content as json:
 ```
 {
   "commands": [
