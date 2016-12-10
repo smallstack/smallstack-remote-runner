@@ -45,7 +45,7 @@ and you'll get back a response with the created job ID:
 }
 ```
 
-# Get a job result
+### Get a job result
 Do a GET on /jobs/e3jFJijeFHoeiuhIOUHFweio and you will get back a response like
 ```
 {
