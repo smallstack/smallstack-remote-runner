@@ -4,7 +4,7 @@ var fs = require("fs-extra");
 var config = require("./config");
 var Chance = require("chance");
 var chance = new Chance();
-var execSync = require('child_process').execSync;
+var executor = require('./executor');
 
 module.exports = {
     "create": function (req, res) {
@@ -18,7 +18,7 @@ module.exports = {
             var job = {};
             job.configuration = body;
             job.id = chance.hash();
-            job.configuration.workingDirectory = path.join(config.jobsDirectory, "job-" + job.id);
+            job.configuration.workingDirectory = path.relative(config.baseDirectory, path.join(config.jobsDirectory, "job-" + job.id));
             fs.ensureDirSync(job.configuration.workingDirectory);
             job.status = "queued";
             job.path = "/jobs/" + job.id;
@@ -30,21 +30,7 @@ module.exports = {
             res.write(JSON.stringify(jobManager.read(job.id), null, 2));
             res.end();
 
-            jobManager.log(job.id, "info", "Starting Job");
-            try {
-                _.each(job.configuration.commands, function (command) {
-                    jobManager.log(job.id, "info", "Executing Command: " + JSON.stringify(command));
-                    var log = execSync(command.command);
-                    jobManager.log(job.id, "info", log);
-                });
-            } catch (e) {
-                jobManager.log(job.id, "error", e.message);
-                jobManager.log(job.id, "info", "Job Failed");
-                jobManager.updateStatus(job.id, "failed");
-                return;
-            }
-            jobManager.log(job.id, "info", "Job Done");
-            jobManager.updateStatus(job.id, "finished");
+            executor.start(job);
         });
     },
     "list": function (req, res, id) {
@@ -76,5 +62,8 @@ module.exports = {
         var job = this.read(jobId);
         job.status = newStatus;
         this.write(job);
+    },
+    "clean": function(jobId) {
+        fs.removeSync(path.join(config.jobsDirectory, "job-" + jobId));
     }
 }
